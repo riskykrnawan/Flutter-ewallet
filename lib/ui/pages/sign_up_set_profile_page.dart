@@ -5,9 +5,16 @@ import 'package:etam_wallet/ui/widgets/forms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class SignUpSetProfile extends StatelessWidget {
+class SignUpSetProfile extends StatefulWidget {
   final SignUpFormModel data;
   const SignUpSetProfile({Key? key, required this.data}) : super(key: key);
+
+  @override
+  State<SignUpSetProfile> createState() => _SignUpSetProfileState();
+}
+
+class _SignUpSetProfileState extends State<SignUpSetProfile> {
+  final pinController = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +85,11 @@ class SignUpSetProfile extends StatelessWidget {
                   )
                   ),
                 const SizedBox(height: 30,),
-                const CustomTextFormField(
+                CustomTextFormField(
                   title: 'Set PIN (6 digit number)',
                   obscureText: true,
                   textInputType: TextInputType.number,
+                  controller: pinController,
                 ),
                 const SizedBox(height: 30,),
                 CustomFilledButton(

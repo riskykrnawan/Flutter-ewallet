@@ -121,7 +121,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         title: 'Continue',
                         onPressed: () {
                           if (validate()) {
-                            context.read().add(AuthCheckEmail(emailController.text));
+                            context.read<AuthBloc>().add(AuthCheckEmail(emailController.text));
                           } else {
                             showCustomSnackbar(
                                 context, 'Semua field harus diisi');
