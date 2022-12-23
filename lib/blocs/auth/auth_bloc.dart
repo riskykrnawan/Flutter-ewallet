@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:etam_wallet/models/signup_form_model.dart';
+import 'package:etam_wallet/models/user_model.dart';
 import 'package:etam_wallet/services/auth_service.dart';
 
 part 'auth_event.dart';
@@ -25,6 +27,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthFailed(e.toString()));
         }
       }
+
+      if (event is AuthRegister) {
+        try {
+          emit(AuthLoading());
+          final user = await AuthService().register(event.data);
+          emit(AuthSuccess(user));
+          
+        } catch (e) {
+          emit(AuthFailed(e.toString()));
+        }
+      }
+
     });
   }
 }

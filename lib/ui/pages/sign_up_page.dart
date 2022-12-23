@@ -131,7 +131,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ]),
               ),
               const SizedBox(
-                height: 50,
+                height: 40,
               ),
               CustomTextButton(
                 title: 'Sign In',
@@ -140,7 +140,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 },
               ),
               const SizedBox(
-                height: 50,
+                height: 40,
               ),
             ],
           );

@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:etam_wallet/models/signup_form_model.dart';
+import 'package:etam_wallet/shared/shared_methods.dart';
 import 'package:etam_wallet/shared/themes.dart';
+import 'package:etam_wallet/ui/pages/sign_up_verify_page.dart';
 import 'package:etam_wallet/ui/widgets/buttons.dart';
 import 'package:etam_wallet/ui/widgets/forms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignUpSetProfile extends StatefulWidget {
   final SignUpFormModel data;
@@ -15,6 +21,16 @@ class SignUpSetProfile extends StatefulWidget {
 
 class _SignUpSetProfileState extends State<SignUpSetProfile> {
   final pinController = TextEditingController(text: '');
+  XFile? selectedImage;
+
+  bool validate() {
+    if (pinController.text.length != 6) {
+      return false;
+    }
+
+    return true;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -51,31 +67,36 @@ class _SignUpSetProfileState extends State<SignUpSetProfile> {
             ),
             child: Column(
               children: [
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: lightBackgroundColor,
-                  ),
-                  child: Center(
-                    child: Image.asset(
-                      'assets/ic_upload_cloud.png',
-                      width: 32,
+                GestureDetector(
+                  onTap: () async {
+                    final image = await selectImage();
+                    setState(() {
+                      selectedImage = image;
+                    });
+                  },
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: lightBackgroundColor,
+                      image: selectedImage == null
+                        ? null 
+                        : DecorationImage(
+                          fit: BoxFit.cover,
+                          image: FileImage(
+                            File(selectedImage!.path)
+                          )
+                        ),
+                    ),
+                    child: selectedImage != null ? null : Center( // kalau ada fotonya maka hapus ikon awan dengan cara kasih null, klo gaada kasih gambar awan
+                      child: Image.asset(
+                        'assets/ic_upload_cloud.png',
+                        width: 32,
+                      ),
                     ),
                   ),
                 ),
-                // Container(
-                //   width: 120,
-                //   height: 120,
-                //   decoration: const BoxDecoration(
-                //     shape: BoxShape.circle,
-                //     image: DecorationImage(
-                //       fit: BoxFit.cover,
-                //       image: AssetImage('assets/img_photo_profile.png')
-                //     )
-                //   ),
-                // ),
                 const SizedBox(height: 16,),
                 Text(
                   'Shayna Hanna',
@@ -95,7 +116,23 @@ class _SignUpSetProfileState extends State<SignUpSetProfile> {
                 CustomFilledButton(
                   title: 'Continue',
                   onPressed: (){
-                    Navigator.pushNamed(context, '/sign-up-verify');
+                    if (validate()) {
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (context) => SignUpVerifyPage(
+                            data: widget.data.copyWith(
+                              pin: pinController.text,
+                              profilePicture: selectedImage == null 
+                              ? null 
+                              : 'data:image/png;base64,' + base64Encode(File(selectedImage!.path).readAsBytesSync()),
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      showCustomSnackbar(context, 'PIN harus 6 digit');
+                    }
                   },
                 )
               ]
