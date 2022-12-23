@@ -30,3 +30,7 @@ class AuthLogin extends AuthEvent {
   // TODO: implement props
   List<Object> get props => [data];
 }
+
+class AuthGetCurrentUser extends AuthEvent {
+  
+}
