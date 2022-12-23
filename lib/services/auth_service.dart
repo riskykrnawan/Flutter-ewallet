@@ -4,6 +4,7 @@ import 'package:etam_wallet/models/signin_form_model.dart';
 import 'package:etam_wallet/models/signup_form_model.dart';
 import 'package:etam_wallet/models/user_model.dart';
 import 'package:etam_wallet/shared/shared_values.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
@@ -35,7 +36,7 @@ class AuthService {
       if (res.statusCode == 200) {
         UserModel user = UserModel.fromJson(jsonDecode(res.body));
         user.copyWith(password: data.password);
-
+        storeCredentialToLocal(user);
         return user;
 
       } else {
@@ -57,6 +58,7 @@ class AuthService {
       if (res.statusCode == 200) {
         UserModel user = UserModel.fromJson(jsonDecode(res.body));
         user.copyWith(password: data.password);
+        storeCredentialToLocal(user);
 
         return user;
 
@@ -67,5 +69,53 @@ class AuthService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> storeCredentialToLocal(UserModel user) async {
+    try {
+      const storage = FlutterSecureStorage();
+      await storage.write(key: 'token', value: user.token);
+      await storage.write(key: 'email', value: user.email);
+      await storage.write(key: 'password', value: user.password);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SignInFormModel> getCredentialFromLocal() async{
+    try {
+      const storage = FlutterSecureStorage();
+      Map<String, String> values = await storage.readAll();
+
+      if (values['email'] == null || values['password'] == null) {
+        throw 'unauthenticated';
+      } else {
+        final SignInFormModel data = SignInFormModel(
+          email: values['email'],
+          password: values['password'],
+        );
+        return data;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> getToken() async {
+    String token = '';
+
+    const storage = FlutterSecureStorage();
+    String? value = await storage.read(key: 'token');
+
+    if (value != null) {
+      token = 'Bearer ' + value;
+    }
+
+    return token;
+  }
+
+  Future<void> clearLocalStorage() async {
+    const storage = FlutterSecureStorage();
+    storage.deleteAll();
   }
 }
