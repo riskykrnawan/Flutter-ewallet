@@ -9,8 +9,8 @@ class PinModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'oldPin': oldPin,
-      'newPin': newPin,
+      'previous_pin': oldPin,
+      'new_pin': newPin,
     };
   }
 }

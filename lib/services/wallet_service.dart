@@ -11,7 +11,7 @@ class WalletService {
     try {
       final token = await AuthService().getToken();
       final res = await http.put(
-        Uri.parse('$baseUrl/users'),
+        Uri.parse('$baseUrl/wallets'),
         body: data.toJson(),
         headers: { // kirimkan token lewat headers
           'Authorization': token,
