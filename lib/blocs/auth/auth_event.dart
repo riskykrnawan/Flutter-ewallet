@@ -43,3 +43,11 @@ class AuthUpdateUser extends AuthEvent {
   // TODO: implement props
   List<Object> get props => [data];
 }
+class AuthUpdatePin extends AuthEvent {
+  final PinModel data;
+  const AuthUpdatePin(this.data);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [data];
+}

@@ -2,12 +2,14 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:etam_wallet/models/pin_model.dart';
 import 'package:etam_wallet/models/signin_form_model.dart';
 import 'package:etam_wallet/models/signup_form_model.dart';
 import 'package:etam_wallet/models/user_edit_form_model.dart';
 import 'package:etam_wallet/models/user_model.dart';
 import 'package:etam_wallet/services/auth_service.dart';
 import 'package:etam_wallet/services/user_service.dart';
+import 'package:etam_wallet/services/wallet_service.dart';
 import 'package:flutter/foundation.dart';
 
 part 'auth_event.dart';
@@ -82,6 +84,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
             emit(AuthLoading());
             await UserService().updateUser(event.data);
+            emit(AuthSuccess(updatedUser));
+          }
+        } catch (e) {
+          emit(AuthFailed(e.toString()));
+        }
+      }
+
+      if (event is AuthUpdatePin) {
+        try {
+          if (state is AuthSuccess) {
+            final updatedUser = (state as AuthSuccess)
+              .user
+              .copyWith(
+                pin: event.data.newPin
+              );
+
+            emit(AuthLoading());
+            await WalletService().updatePin(event.data);
             emit(AuthSuccess(updatedUser));
           }
         } catch (e) {

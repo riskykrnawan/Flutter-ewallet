@@ -6,7 +6,7 @@ import 'package:etam_wallet/ui/pages/home_page.dart';
 import 'package:etam_wallet/ui/pages/more_data_page.dart';
 import 'package:etam_wallet/ui/pages/onboarding_pages.dart';
 import 'package:etam_wallet/ui/pages/pin_page.dart';
-import 'package:etam_wallet/ui/pages/profil_edit_pin.dart';
+import 'package:etam_wallet/ui/pages/profil_edit_pin_page.dart';
 import 'package:etam_wallet/ui/pages/profil_edit_success.dart';
 import 'package:etam_wallet/ui/pages/profile_edit_page.dart';
 import 'package:etam_wallet/ui/pages/profile_page.dart';
