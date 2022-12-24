@@ -1,11 +1,12 @@
+import 'package:etam_wallet/blocs/auth/auth_bloc.dart';
 import 'package:etam_wallet/shared/shared_methods.dart';
 import 'package:etam_wallet/shared/themes.dart';
 import 'package:etam_wallet/ui/widgets/buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PinPage extends StatefulWidget {
   const PinPage({Key? key}) : super(key: key);
-
   @override
   State<PinPage> createState() => _PinPageState();
 }
@@ -13,6 +14,18 @@ class PinPage extends StatefulWidget {
 class _PinPageState extends State<PinPage> {
 
   final TextEditingController pinController = TextEditingController(text: '');
+  String pin = '';
+  bool isError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final authState = context.read<AuthBloc>().state;
+
+    if (authState is AuthSuccess) {
+      pin = authState.user.pin!;
+    }
+  }
 
   addPin(String num) {
     if (pinController.text.length < 6) {
@@ -22,18 +35,21 @@ class _PinPageState extends State<PinPage> {
     }
 
     if (pinController.text.length == 6) {
-      if (pinController.text == '123456') {
+      if (pinController.text == pin) {
         Navigator.pop(context, true);
       } else {
+        setState(() {
+          isError = true; // karena salah, bintangnya dijadikan merah
+        });
         showCustomSnackbar(context, 'PIN yang Anda masukkan salah. Silakan coba lagi');
       }
     }
-    
   }
 
   deletePin() {
     if (pinController.text.isNotEmpty) {
       setState(() {
+        isError = false;  // kalau menghapus, iserror jadikan false
         pinController.text = pinController.text.substring(0, pinController.text.length - 1);
       });
     }
@@ -72,7 +88,8 @@ class _PinPageState extends State<PinPage> {
                     style: whiteTextStyle.copyWith(
                       fontSize: 36,
                       fontWeight: medium,
-                      letterSpacing: 10.8
+                      letterSpacing: 10.8,
+                      color: isError ? redColor : whiteColor,
                     ),
                     decoration: InputDecoration(
                       disabledBorder: UnderlineInputBorder(

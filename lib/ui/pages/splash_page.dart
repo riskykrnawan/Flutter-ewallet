@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:etam_wallet/blocs/auth/auth_bloc.dart';
 import 'package:etam_wallet/shared/themes.dart';
@@ -19,7 +20,6 @@ class SplashPage extends StatelessWidget {
           if (state is AuthSuccess) {
             Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
           }
-
           if (state is AuthFailed) {
             Navigator.pushNamedAndRemoveUntil(context, '/onboarding', (route) => false);
           }

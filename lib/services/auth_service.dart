@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:etam_wallet/models/signin_form_model.dart';
 import 'package:etam_wallet/models/signup_form_model.dart';
 import 'package:etam_wallet/models/user_model.dart';
 import 'package:etam_wallet/shared/shared_values.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,13 +59,12 @@ class AuthService {
 
       if (res.statusCode == 200) {
         UserModel user = UserModel.fromJson(jsonDecode(res.body));
-        user.copyWith(password: data.password);
+        user = user.copyWith(password: data.password);
         storeCredentialToLocal(user);
-
         return user;
 
       } else {
-        throw jsonDecode(res.body)['messages']; // gunakan throw bukan return karena ingin errornya ditangkap oleh catch di auth bloc
+        throw jsonDecode(res.body)['message']; // gunakan throw bukan return karena ingin errornya ditangkap oleh catch di auth bloc
       }
 
     } catch (e) {
@@ -77,6 +78,7 @@ class AuthService {
       await storage.write(key: 'token', value: user.token);
       await storage.write(key: 'email', value: user.email);
       await storage.write(key: 'password', value: user.password);
+      Map<String, String> values = await storage.readAll();
     } catch (e) {
       rethrow;
     }
@@ -86,9 +88,8 @@ class AuthService {
     try {
       const storage = FlutterSecureStorage();
       Map<String, String> values = await storage.readAll();
-
       if (values['email'] == null || values['password'] == null) {
-        throw 'unauthenticated';
+        throw 'Unauthenticated credentials';
       } else {
         final SignInFormModel data = SignInFormModel(
           email: values['email'],

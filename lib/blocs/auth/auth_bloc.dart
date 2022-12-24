@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:etam_wallet/models/signin_form_model.dart';
 import 'package:etam_wallet/models/signup_form_model.dart';
 import 'package:etam_wallet/models/user_model.dart';
 import 'package:etam_wallet/services/auth_service.dart';
+import 'package:flutter/foundation.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -54,7 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (event is AuthGetCurrentUser) {
         try {
           emit(AuthLoading());
-          SignInFormModel data = await AuthService().getCredentialFromLocal();
+          final SignInFormModel data = await AuthService().getCredentialFromLocal();
           final UserModel user = await AuthService().login(data);
           emit(AuthSuccess(user));
           
